@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muteado — Propuesta de Desarrollo e Inversión</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Poppins', -apple-system, sans-serif; font-weight: 300; background: #fff; color: #000; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+/* ─── NAV ─── */
+.nav { position: sticky; top: 0; z-index: 100; background: #000; border-bottom: 2px solid #7c3aed; display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 3rem; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.45); text-decoration: none; transition: color .15s; }
+.nav-links a:hover { color: #fff; }
+.nav-tag { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+
+/* ─── LAYOUT ─── */
+.section { padding: 6rem 3rem; border-bottom: 1px solid #e5e5e5; }
+.section--gray { background: #f9f9f9; }
+.section--hero { padding-top: 7rem; padding-bottom: 6rem; }
+.inner { max-width: 1100px; margin: 0 auto; }
+.inner--narrow { max-width: 780px; }
+
+/* ─── LABEL ─── */
+.label { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: #888; margin-bottom: 0.85rem; display: block; }
+.sub-label { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #7c3aed; margin-bottom: 1.1rem; display: block; }
+
+/* ─── TYPOGRAPHY ─── */
+h1, h2 { font-weight: 200; letter-spacing: -0.03em; line-height: 1.06; }
+h1 { font-size: clamp(2.6rem, 7vw, 5.2rem); margin-bottom: 2rem; }
+h2 { font-size: clamp(2rem, 4.5vw, 3.6rem); margin-bottom: 2.5rem; }
+h2 strong, h1 strong { font-weight: 600; }
+.body-text { font-size: 0.9rem; font-weight: 300; line-height: 1.85; color: #444; }
+.body-text p + p { margin-top: 1.1rem; }
+.body-text strong { font-weight: 600; color: #000; }
+
+/* ─── STATS ─── */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); border: 2px solid #000; margin-top: 1.2rem; }
+.stat { padding: 1.8rem 2rem; border-right: 2px solid #000; }
+.stat:last-child { border-right: none; }
+.stat-num { font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 200; letter-spacing: -0.04em; line-height: 1; }
+.stat-lbl { font-size: 0.68rem; font-weight: 400; color: #888; margin-top: 0.35rem; }
+
+/* ─── CARDS ─── */
+.cards-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+.cards-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.card { border: 2px solid #000; padding: 2rem 2.2rem; background: #fff; transition: transform .18s, box-shadow .18s; cursor: default; }
+.card:hover { transform: translateY(-3px); box-shadow: 4px 4px 0 #000; }
+.card-num { font-size: 2.4rem; font-weight: 200; color: #7c3aed; line-height: 1; margin-bottom: 0.7rem; letter-spacing: -0.04em; }
+.card h3 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.45rem; }
+.card p { font-size: 0.8rem; font-weight: 300; line-height: 1.68; color: #555; }
+
+/* ─── GRID CHILDREN — prevent overflow ─── */
+.two-col > *, .cards-3 > *, .cards-2 > *, .stats > *, .territories > *, .timeline > *, .pgrid > * { min-width: 0; }
+
+/* ─── TWO COL ─── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: start; }
+.two-col--mt { margin-top: 3rem; }
+.two-col--mb { margin-bottom: 3rem; }
+
+/* ─── CALLOUTS ─── */
+.cv { border-left: 4px solid #7c3aed; padding: 1.3rem 1.6rem; background: #ede9fe; margin-bottom: 0.8rem; }
+.cv:last-child { margin-bottom: 0; }
+.ck { border-left: 4px solid #000; padding: 1.3rem 1.6rem; background: #f3f3f3; }
+.cv-stack { display: flex; flex-direction: column; gap: 0.7rem; }
+.cv-text { font-size: 0.88rem; font-weight: 500; color: #1e1b4b; }
+.cell-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+.cell-item { font-size: 0.85rem; font-weight: 300; color: #444; padding-left: 1.2rem; position: relative; }
+.cell-item::before { content: "—"; position: absolute; left: 0; color: #7c3aed; font-weight: 700; }
+
+/* ─── QUOTE ─── */
+.quote { border-top: 2px solid #7c3aed; border-bottom: 2px solid #7c3aed; padding: 1.6rem 0; font-style: italic; font-size: 1rem; font-weight: 400; line-height: 1.75; margin: 2rem 0; }
+
+/* ─── TERRITORIES ─── */
+.territories { display: grid; grid-template-columns: repeat(4,1fr); border: 2px solid #000; }
+.territory { padding: 2rem 1.8rem; border-right: 2px solid #000; }
+.territory:last-child { border-right: none; }
+.t-num { width: 32px; height: 32px; border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; margin-bottom: 1rem; }
+.territory h3 { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.35rem; }
+.territory p { font-size: 0.77rem; font-weight: 300; color: #888; line-height: 1.55; }
+
+/* ─── TIMELINE ─── */
+.timeline { display: grid; grid-template-columns: repeat(6,1fr); border: 2px solid #000; margin-top: 2.5rem; }
+.tl { padding: 1.8rem 1.5rem; border-right: 2px solid #000; }
+.tl:last-child { border-right: none; }
+.tl.accent { background: #7c3aed; color: #fff; }
+.tl-n { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #888; margin-bottom: 0.8rem; }
+.tl.accent .tl-n { color: rgba(255,255,255,0.65); }
+.tl-t { font-size: 0.82rem; font-weight: 600; line-height: 1.35; margin-bottom: 0.45rem; }
+.tl-b { font-size: 0.75rem; font-weight: 300; color: #666; line-height: 1.55; }
+.tl.accent .tl-b { color: rgba(255,255,255,0.8); }
+
+/* ─── INVEST ─── */
+.invest-box { display: grid; grid-template-columns: auto 1fr; border: 2px solid #000; margin-bottom: 2.5rem; }
+.invest-l { background: #000; color: #fff; padding: 3.5rem 4rem; }
+.invest-divider { margin-top: 1.8rem; padding-top: 1.8rem; border-top: 1px solid rgba(255,255,255,0.15); }
+.invest-amount { font-size: clamp(2.8rem, 5vw, 4.5rem); font-weight: 200; letter-spacing: -0.04em; line-height: 1; }
+.invest-amount--secondary { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 200; letter-spacing: -0.04em; line-height: 1; color: rgba(255,255,255,0.75); }
+.invest-sub { font-size: 0.7rem; font-weight: 300; color: rgba(255,255,255,0.5); margin-top: 0.45rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.invest-r { padding: 2.5rem 3rem; display: flex; align-items: center; }
+
+
+/* ─── PARTNER GRID ─── */
+.pgrid { display: grid; grid-template-columns: 1fr 1fr; border: 2px solid #000; }
+.pitem { padding: 2.2rem 2.4rem; border-right: 2px solid #000; border-bottom: 2px solid #000; display: flex; gap: 0.9rem; align-items: flex-start; }
+.pitem:nth-child(2n) { border-right: none; }
+.pitem:nth-last-child(-n+2) { border-bottom: none; }
+.pbar { width: 3px; background: #7c3aed; align-self: stretch; flex-shrink: 0; }
+.pitem h3 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.4rem; }
+.pitem p { font-size: 0.8rem; font-weight: 300; line-height: 1.7; color: #666; }
+
+/* ─── VISION ─── */
+.vision { padding: 7rem 3rem; text-align: center; background: #f9f9f9; border-bottom: 1px solid #e5e5e5; }
+.vision-tagline { font-size: 1rem; font-weight: 400; font-style: italic; color: #555; margin-bottom: 2.5rem; }
+.tags { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin: 2rem 0; }
+.tag { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; border: 2px solid #000; padding: 0.32rem 0.85rem; }
+
+/* ─── CONTACT BOX ─── */
+.contact-box { border: 2px solid #000; display: inline-block; padding: 2.2rem 3.5rem; margin-bottom: 2.5rem; text-align: left; }
+.contact-box-label { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #888; margin-bottom: 0.6rem; }
+.contact-box-title { font-size: 1.05rem; font-weight: 500; margin-bottom: 0.3rem; }
+.contact-box-sub { font-size: 0.85rem; font-weight: 300; color: #555; }
+
+/* ─── BUTTON ─── */
+.btn { display: inline-block; font-family: 'Poppins', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.85rem 2.2rem; text-decoration: none; border: 2px solid #000; background: #000; color: #fff; transition: transform .15s, box-shadow .15s; cursor: pointer; }
+.btn:hover { transform: translateY(-2px); box-shadow: 4px 4px 0 #7c3aed; }
+.btn-v { background: #7c3aed; border-color: #7c3aed; }
+.btn-v:hover { box-shadow: 4px 4px 0 #000; }
+
+/* ─── FOOTER ─── */
+footer { background: #000; color: #fff; border-top: 2px solid #7c3aed; padding: 2.8rem 3rem; display: flex; align-items: center; justify-content: space-between; }
+footer p { font-size: 0.72rem; font-weight: 300; color: rgba(255,255,255,0.38); }
+
+/* ─── REVEAL ─── */
+.reveal { opacity: 1; transform: translateY(0); transition: opacity .65s ease, transform .65s ease; }
+.js-ready .reveal { opacity: 0; transform: translateY(22px); }
+.js-ready .reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── RESPONSIVE 960px ─── */
+@media (max-width: 960px) {
+  .nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .nav-tag { display: none; }
+
+  .section { padding: 4rem 1.5rem; }
+  .section--hero { padding-top: 5rem; padding-bottom: 4rem; }
+  .vision { padding: 5rem 1.5rem; }
+
+  h1 { margin-bottom: 1.5rem; }
+  h2 { margin-bottom: 2rem; }
+
+  /* Stats 2×2 */
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat { border-bottom: 2px solid #000; }
+  .stat:nth-child(2n) { border-right: none; }
+  .stat:nth-last-child(-n+2) { border-bottom: none; }
+
+  .cards-3 { grid-template-columns: 1fr 1fr; }
+  .cards-2 { grid-template-columns: 1fr 1fr; }
+
+  .two-col { grid-template-columns: 1fr; gap: 2rem; }
+  .two-col--mt { margin-top: 2rem; }
+  .two-col--mb { margin-bottom: 2rem; }
+
+  /* Territories 2×2 */
+  .territories { grid-template-columns: 1fr 1fr; }
+  .territory { border-bottom: 2px solid #000; }
+  .territory:nth-child(2n) { border-right: none; }
+  .territory:nth-last-child(-n+2) { border-bottom: none; }
+
+  /* Timeline 2-col */
+  .timeline { grid-template-columns: 1fr 1fr; }
+  .tl { border-bottom: 2px solid #000; }
+  .tl:nth-child(2n) { border-right: none; }
+  .tl:nth-last-child(-n+2) { border-bottom: none; }
+
+  /* Partner grid — 1 col */
+  .pgrid { grid-template-columns: 1fr; }
+  .pitem { border-right: none !important; }
+  .pitem:nth-last-child(-n+2) { border-bottom: 2px solid #000; }
+  .pitem:last-child { border-bottom: none; }
+
+  /* Invest box */
+  .invest-box { grid-template-columns: 1fr; }
+  .invest-l { padding: 2.5rem 2rem; }
+  .invest-r { padding: 2rem; }
+
+  .contact-box { padding: 1.8rem 2rem; }
+
+  footer { flex-direction: column; gap: 1rem; text-align: center; }
+}
+
+/* ─── RESPONSIVE 600px ─── */
+@media (max-width: 600px) {
+  .section { padding: 3rem 1.2rem; }
+  .section--hero { padding-top: 4rem; padding-bottom: 3rem; }
+  .vision { padding: 4rem 1.2rem; }
+
+  h2 { margin-bottom: 1.5rem; }
+
+  /* Stats single column */
+  .stats { grid-template-columns: 1fr; }
+  .stat { border-right: none !important; border-bottom: 2px solid #000; }
+  .stat:last-child { border-bottom: none; }
+
+  .cards-3 { grid-template-columns: 1fr; }
+  .cards-2 { grid-template-columns: 1fr; }
+
+  /* Territories single column */
+  .territories { grid-template-columns: 1fr; }
+  .territory { border-right: none !important; border-bottom: 2px solid #000; }
+  .territory:last-child { border-bottom: none; }
+
+  /* Timeline single column */
+  .timeline { grid-template-columns: 1fr; }
+  .tl { border-right: none !important; border-bottom: 2px solid #000; }
+  .tl:last-child { border-bottom: none; }
+
+  .invest-l { padding: 2rem 1.5rem; }
+  .invest-r { padding: 1.8rem 1.5rem; }
+
+  .contact-box { width: 100%; padding: 1.8rem 1.5rem; }
+
+  footer { padding: 2rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <svg style="height:24px;fill:white;" viewBox="0 0 1120 263.49" xmlns="http://www.w3.org/2000/svg"><polygon points="403.79 67.11 403.79 202.15 370.89 202.15 370.89 121.17 340.69 202.15 314.14 202.15 283.74 120.97 283.74 202.15 250.85 202.15 250.85 67.11 289.71 67.11 327.61 160.6 365.12 67.11 403.79 67.11"/><path d="M533.45,94.81v107.35h-32.89v-14.62c-3.34,4.75-7.86,8.56-13.56,11.45-5.71,2.89-12.02,4.33-18.95,4.33-8.2,0-15.45-1.83-21.74-5.48-6.29-3.67-11.16-8.96-14.62-15.87-3.46-6.94-5.19-15.08-5.19-24.44v-62.71h32.71v58.3c0,7.17,1.86,12.76,5.57,16.73,3.72,3.98,8.72,5.96,15.01,5.96s11.48-1.98,15.2-5.96c3.72-3.97,5.58-9.57,5.58-16.73v-58.3h32.89Z"/><path d="M616.94,174.26v27.9h-16.73c-11.93,0-21.23-2.91-27.9-8.75-6.67-5.84-10-15.36-10-28.57v-42.71h-13.08v-27.32h13.08v-26.16h32.9v26.16h21.54v27.32h-21.54v43.1c0,3.21.77,5.51,2.31,6.92,1.54,1.41,4.1,2.11,7.7,2.11h11.73Z"/><path d="M702.74,138.09c0-5.64-1.93-10.13-5.77-13.46-3.85-3.34-8.66-5.01-14.43-5.01s-10.16,1.61-13.94,4.82c-3.79,3.21-6.13,7.75-7.02,13.65h41.17ZM735.83,156.36h-74.45c.51,6.69,2.66,11.77,6.45,15.29,3.78,3.54,8.43,5.29,13.95,5.29,8.2,0,13.92-3.46,17.12-10.38h35.01c-1.79,7.05-5.03,13.4-9.71,19.03-4.68,5.65-10.55,10.07-17.61,13.28-7.05,3.21-14.94,4.8-23.65,4.8-10.52,0-19.88-2.24-28.1-6.73-8.2-4.48-14.61-10.9-19.23-19.24-4.62-8.33-6.93-18.08-6.93-29.23s2.28-20.91,6.83-29.24c4.55-8.35,10.93-14.75,19.14-19.24,8.2-4.49,17.63-6.73,28.28-6.73s19.61,2.18,27.7,6.54c8.08,4.35,14.39,10.58,18.94,18.66,4.55,8.08,6.83,17.5,6.83,28.27,0,3.09-.2,6.29-.58,9.61"/><path d="M820.76,129.06c-4.55-4.75-10.1-7.12-16.64-7.12s-12.1,2.33-16.64,7.02c-4.56,4.7-6.83,11.13-6.83,19.33s2.27,14.71,6.83,19.54c4.54,4.8,10.1,7.2,16.64,7.2s12.09-2.36,16.64-7.11c4.55-4.74,6.82-11.23,6.82-19.43s-2.27-14.68-6.82-19.43M753.43,119.24c4.17-8.34,9.84-14.75,17.02-19.24,7.18-4.5,15.2-6.73,24.05-6.73,7.56,0,14.2,1.53,19.91,4.62,5.7,3.08,10.11,7.12,13.17,12.12v-15.2h32.89v107.35h-32.89v-15.2c-3.21,5.01-7.65,9.05-13.36,12.12-5.7,3.09-12.34,4.62-19.91,4.62-8.72,0-16.67-2.27-23.85-6.82-7.18-4.55-12.86-11.02-17.02-19.43-4.17-8.39-6.25-18.11-6.25-29.15s2.08-20.71,6.25-29.04"/><path d="M951.37,129.06c-4.54-4.75-10.1-7.12-16.63-7.12s-12.1,2.33-16.64,7.02c-4.56,4.7-6.84,11.13-6.84,19.33s2.28,14.71,6.84,19.54c4.54,4.8,10.1,7.2,16.64,7.2s12.09-2.36,16.63-7.11c4.56-4.74,6.84-11.23,6.84-19.43s-2.28-14.68-6.84-19.43M884.05,119.24c4.17-8.34,9.83-14.75,17.02-19.24,7.18-4.5,15.2-6.73,24.04-6.73,7.06,0,13.5,1.47,19.34,4.43,5.84,2.94,10.43,6.92,13.76,11.91v-49.81h32.89v142.35h-32.89v-15.39c-3.09,5.13-7.48,9.24-13.18,12.3-5.71,3.09-12.35,4.62-19.92,4.62-8.84,0-16.86-2.27-24.04-6.82-7.19-4.55-12.85-11.02-17.02-19.43-4.18-8.39-6.26-18.11-6.26-29.15s2.08-20.71,6.26-29.04"/><path d="M1079.89,168.29c4.41-4.62,6.64-11.21,6.64-19.8s-2.16-15.2-6.45-19.82c-4.29-4.62-9.58-6.92-15.87-6.92s-11.73,2.27-15.97,6.82c-4.23,4.55-6.34,11.19-6.34,19.91s2.08,15.19,6.24,19.8c4.17,4.62,9.39,6.94,15.69,6.94s11.63-2.32,16.07-6.94M1035.44,196.96c-8.39-4.48-15-10.9-19.8-19.24-4.82-8.33-7.22-18.08-7.22-29.23s2.43-20.74,7.31-29.15c4.87-8.39,11.54-14.84,20.01-19.34,8.45-4.49,17.96-6.73,28.46-6.73s20.01,2.24,28.48,6.73c8.47,4.5,15.12,10.95,20.01,19.34,4.87,8.41,7.31,18.11,7.31,29.15s-2.48,20.75-7.41,29.14c-4.95,8.41-11.68,14.86-20.19,19.33-8.53,4.5-18.07,6.73-28.57,6.73s-19.98-2.24-28.38-6.73"/><path d="M155.61,117.47l-4.93,1.78-24.97,9.03h-.01v88.24h0s-42.76-34.1-42.76-34.1v-38.68h.01v-.06h-.01l-.08.09-13.03,14.59h0s-11.81-5.61-11.81-5.61h0v22.72h-28.09v-12.53l-1.07.39L0,173.72v31.63h63.82l63.2,53.96c3.2,2.73,7.07,4.18,11.19,4.18,9.6,0,17.41-7.79,17.41-17.36V117.47Z"/><path d="M4.93,141.56l24.95-9.04h0v-44.6h28.09l12.49,29.89.04.1v-.02l.04-.13h-.01s12.4-36.82,12.4-36.82l42.76-34.11h0v50.93h.01l29.9-10.84V17.47c0-9.63-7.86-17.47-17.51-17.47-4.15,0-8.04,1.45-11.26,4.21l-63.02,53.81H0v85.25l4.93-1.7Z"/></svg>
+  <ul class="nav-links">
+    <li><a href="#activos">Activos</a></li>
+    <li><a href="#identidad">Identidad</a></li>
+    <li><a href="#expansion">Expansión</a></li>
+    <li><a href="#oportunidad">Oportunidad</a></li>
+    <li><a href="#inversion">Inversión</a></li>
+    <li><a href="#partnership">Partnership</a></li>
+    <li><a href="#vision">Visión</a></li>
+  </ul>
+  <span class="nav-tag">Propuesta de Inversión · 2026–2027</span>
+</nav>
+
+<!-- 1. INTRODUCCIÓN -->
+<section class="section section--hero">
+  <div class="inner">
+    <span class="label reveal">01 · Introducción</span>
+    <h1 class="reveal">Propuesta de Desarrollo<br><strong>e Inversión.</strong></h1>
+    <div class="two-col two-col--mt">
+      <div class="body-text reveal">
+        <p>Muteado es un medio de comunicación digital nacido en la ciudad de Salta con el objetivo de informar, analizar y explicar la realidad política, social y económica de la provincia con una mirada moderna, federal y accesible.</p>
+        <p>El proyecto surge como respuesta a una transformación profunda del ecosistema mediático: hoy la conversación pública se construye principalmente en plataformas digitales y redes sociales, donde las audiencias consumen información de forma inmediata, audiovisual y dinámica.</p>
+        <p>En ese contexto, Muteado busca posicionarse como un medio joven, innovador y con fuerte presencia digital, capaz de informar, entretener y generar análisis político de calidad.</p>
+      </div>
+      <div class="reveal">
+        <div class="cv">
+          <p style="font-size:0.92rem; font-weight:400; line-height:1.75; color:#1e1b4b;">Muteado no es una idea en desarrollo: es un medio en funcionamiento con infraestructura propia, comunidad digital consolidada y tecnología aplicada a la operación periodística.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="stat-num">34K+</div><div class="stat-lbl">seguidores · Instagram</div></div>
+          <div class="stat"><div class="stat-num">60K+</div><div class="stat-lbl">seguidores · TikTok</div></div>
+          <div class="stat"><div class="stat-lbl" style="margin-top:0; font-size:0.7rem; font-weight:500; color:#000; letter-spacing:0.12em;">YouTube</div><div class="stat-lbl">canal en desarrollo</div></div>
+          <div class="stat"><div class="stat-lbl" style="margin-top:0; font-size:0.7rem; font-weight:500; color:#000; letter-spacing:0.12em;">X / Twitter</div><div class="stat-lbl">en lanzamiento</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. ACTIVOS -->
+<section class="section section--gray" id="activos">
+  <div class="inner">
+    <span class="label reveal">02 · Activos actuales del proyecto</span>
+    <h2 class="reveal">Un medio en funcionamiento,<br><strong>no en desarrollo.</strong></h2>
+    <div class="two-col">
+      <div class="reveal">
+        <span class="sub-label">Infraestructura</span>
+        <div class="body-text">
+          <p>Estudio audiovisual propio en la ciudad de Salta, equipado con tecnología profesional para producción audiovisual, entrevistas, streaming y programas en vivo.</p>
+          <p>Espacio diseñado para generar contenido digital con calidad de producción, consistencia y capacidad de crecimiento.</p>
+        </div>
+        <div style="margin-top:2.2rem;">
+          <span class="sub-label">Plataforma web</span>
+          <div class="body-text">
+            <p>Portal informativo propio, desarrollado internamente, con integración de herramientas tecnológicas para acelerar procesos y mejorar cobertura de agenda.</p>
+            <p>La automatización funciona como asistencia operativa — no como reemplazo de criterio editorial: permite velocidad y amplitud de cobertura, mientras que el valor diferencial del medio sigue estando en la curaduría, el contexto y el método.</p>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <span class="sub-label">Ecosistema digital</span>
+        <p class="body-text" style="margin-bottom:1.5rem;">Muteado funciona como medio nativo digital con foco en construcción sostenida de audiencias y comunidad a través de redes sociales y plataformas audiovisuales.</p>
+        <div class="cards-2">
+          <div class="card"><div class="card-num">IG</div><h3>Instagram</h3><p>Más de 34.000 seguidores con crecimiento sostenido y contenido diario.</p></div>
+          <div class="card"><div class="card-num">TT</div><h3>TikTok</h3><p>Más de 60.000 seguidores con alto alcance provincial.</p></div>
+          <div class="card"><div class="card-num">YT</div><h3>YouTube</h3><p>Canal en desarrollo para producciones propias, entrevistas y programas.</p></div>
+          <div class="card"><div class="card-num">X</div><h3>X (ex Twitter)</h3><p>En proceso de lanzamiento para conversación política e información inmediata.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. IDENTIDAD -->
+<section class="section" id="identidad">
+  <div class="inner">
+    <span class="label reveal">03 · Identidad editorial</span>
+    <h2 class="reveal">En tiempos de ruido,<br><strong>hace falta método.</strong></h2>
+    <div class="two-col">
+      <div class="reveal">
+        <div class="body-text" style="margin-bottom:1.8rem;"><p>Muteado se propone construir un medio con una identidad clara.</p></div>
+        <div class="cv-stack">
+          <div class="cv"><p class="cv-text">Informar con responsabilidad</p></div>
+          <div class="cv"><p class="cv-text">Explicar la política de forma accesible</p></div>
+          <div class="cv"><p class="cv-text">Combinar información, análisis y entretenimiento con criterio</p></div>
+          <div class="cv"><p class="cv-text">Sostener conversación pública sin gritos, agresiones ni violencia</p></div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="body-text">
+          <p>En un contexto donde gran parte de la discusión política se volvió agresiva y superficial, Muteado propone recuperar algo básico: <strong>explicar mejor</strong>. Separar hecho de interpretación, sumar contexto, ordenar la agenda y construir una conversación pública más madura.</p>
+        </div>
+        <blockquote class="quote">No le hablamos al "centro" como etiqueta. Le hablamos a la gente que está cansada de que todo sea una pelea, a la que no grita pero igual quiere entender, a la que no se identifica con extremos pero tampoco quiere que le vendan certezas fáciles.</blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. EXPANSIÓN -->
+<section class="section section--gray" id="expansion">
+  <div class="inner">
+    <span class="label reveal">04 · Plan de expansión — Año 1</span>
+    <h2 class="reveal">Red informativa provincial.</h2>
+    <div class="two-col two-col--mb">
+      <div class="body-text reveal">
+        <p>El objetivo estratégico del Año 1 es consolidar a Muteado como un medio provincial sólido, con producto central fuerte y presencia territorial en departamentos estratégicos, sin perder estándar editorial ni control operativo.</p>
+        <p>El estudio central en Salta Capital continuará siendo el núcleo de producción audiovisual y coordinación editorial. Desde allí se consolida el producto, se fijan formatos, se sostiene ritmo y se unifica la línea.</p>
+      </div>
+      <div class="reveal ck" style="margin-bottom:0;">
+        <span class="sub-label">Las células permiten</span>
+        <ul class="cell-list">
+          <li class="cell-item">Generar contenido local y cobertura sostenida</li>
+          <li class="cell-item">Cubrir agenda política y social de cada región</li>
+          <li class="cell-item">Producir corresponsalías e informes</li>
+          <li class="cell-item">Ampliar presencia territorial con coherencia editorial</li>
+        </ul>
+      </div>
+    </div>
+    <div class="territories reveal">
+      <div class="territory"><div class="t-num">01</div><h3>Salta Capital</h3><p>Núcleo de producción audiovisual y coordinación editorial central.</p></div>
+      <div class="territory"><div class="t-num">02</div><h3>San Martín</h3><p>Célula periodística en departamento estratégico del norte provincial.</p></div>
+      <div class="territory"><div class="t-num">03</div><h3>Orán</h3><p>Cobertura regional y producción de corresponsalías con estándar común.</p></div>
+      <div class="territory"><div class="t-num">04</div><h3>Gral. Güemes / Metán</h3><p>Informes regionales y circulación en la red informativa provincial.</p></div>
+    </div>
+    <div class="cv reveal" style="margin-top:1.2rem; margin-bottom:0;">
+      <p style="font-size:0.88rem; font-weight:300; line-height:1.75; color:#1e1b4b;">El objetivo es construir una <strong style="font-weight:600;">red informativa provincial moderna</strong>, ágil y representativa de la diversidad territorial de Salta.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5. OPORTUNIDAD -->
+<section class="section" id="oportunidad">
+  <div class="inner">
+    <span class="label reveal">05 · Oportunidad estratégica</span>
+    <h2 class="reveal">Un espacio en crecimiento.</h2>
+    <div class="two-col">
+      <div class="body-text reveal">
+        <p>La provincia de Salta cuenta con un ecosistema mediático históricamente concentrado en medios tradicionales, mientras el consumo de información se trasladó de forma acelerada hacia plataformas digitales.</p>
+        <p>La evolución del consumo informativo indica que los medios digitales serán cada vez más determinantes en agenda pública. Muteado está diseñado para ese escenario desde el inicio.</p>
+      </div>
+      <div class="reveal">
+        <div class="cards-2">
+          <div class="card"><div class="card-num">01</div><h3>Información en redes</h3><p>Información política adaptada a redes sociales y consumo audiovisual dinámico.</p></div>
+          <div class="card"><div class="card-num">02</div><h3>Producción dinámica</h3><p>Capacidad de producción audiovisual con identidad y consistencia editorial.</p></div>
+          <div class="card"><div class="card-num">03</div><h3>Explicación clara</h3><p>Explicación clara de temas complejos con contexto y método periodístico.</p></div>
+          <div class="card"><div class="card-num">04</div><h3>Presencia territorial</h3><p>Red de corresponsalías y cobertura en departamentos estratégicos de toda la provincia.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. INVERSIÓN -->
+<section class="section section--gray" id="inversion">
+  <div class="inner">
+    <span class="label reveal">06 · Plan de inversión y desarrollo — Año 1</span>
+    <h2 class="reveal">Plan de inversión<br><strong>Año 1.</strong></h2>
+    <div class="invest-box reveal">
+      <div class="invest-l">
+        <div class="invest-amount">USD 6.000</div>
+        <div class="invest-sub">mensuales</div>
+        <div class="invest-divider">
+          <div class="invest-amount--secondary">USD 72.000</div>
+          <div class="invest-sub">inversión total · año 1</div>
+        </div>
+      </div>
+      <div class="invest-r">
+        <p class="body-text">Esta inversión permite fortalecer la estructura del medio, acelerar el despliegue territorial y preparar el sistema para cerrar el Año 1 con escala real.</p>
+      </div>
+    </div>
+    <div class="timeline reveal">
+      <div class="tl"><div class="tl-n">Mes 01</div><div class="tl-t">Instalación y orden operativo</div><div class="tl-b">Fortalecimiento del equipo, ajuste de roles, plan editorial provincial y estructura de formatos.</div></div>
+      <div class="tl"><div class="tl-n">Mes 02</div><div class="tl-t">Consolidación de producto</div><div class="tl-b">Lanzamiento formal de YouTube, secciones y formatos regulares. Inicio en X.</div></div>
+      <div class="tl"><div class="tl-n">Mes 03</div><div class="tl-t">Inicio territorial</div><div class="tl-b">Primeras coberturas en interior, corresponsalías y contenido regional con estándar común.</div></div>
+      <div class="tl accent"><div class="tl-n">Mes 04 ★</div><div class="tl-t">Amplificación 1</div><div class="tl-b">Ventana puntual para instalar marca y formatos clave a escala provincial.</div></div>
+      <div class="tl"><div class="tl-n">Mes 05</div><div class="tl-t">Red provincial</div><div class="tl-b">Consolidación de células, integración territorial del contenido e informes regionales.</div></div>
+      <div class="tl accent"><div class="tl-n">Mes 06 ★</div><div class="tl-t">Amplificación 2</div><div class="tl-b">Cierre de etapa con marca más instalada y operación más estable.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. PARTNERSHIP -->
+<section class="section section--gray" id="partnership">
+  <div class="inner">
+    <span class="label reveal">07 · Partnership — Qué obtiene un Partner / Inversor</span>
+    <h2 class="reveal">Asociación estratégica,<br><strong>no publicidad.</strong></h2>
+    <p class="body-text reveal" style="max-width:680px; margin-bottom:2.5rem;">Asociación estratégica con un medio en expansión, construido sobre método editorial, capacidad de producción y presencia territorial escalable. Una forma de participar del crecimiento desde adentro del sistema, no desde afuera como publicidad.</p>
+    <div class="pgrid reveal">
+      <div class="pitem"><div class="pbar"></div><div><h3>Asociación de Marca</h3><p>Presencia sostenida y visible asociada a Muteado como medio en crecimiento, con coherencia editorial y continuidad.</p></div></div>
+      <div class="pitem"><div class="pbar"></div><div><h3>Integración en Productos de Stream</h3><p>Menciones, bloques, secciones y presencia en dinámica de programas, con integración natural a formatos y conversaciones del medio.</p></div></div>
+      <div class="pitem"><div class="pbar"></div><div><h3>Participación en Activaciones</h3><p>Coberturas especiales, lanzamientos, eventos y acciones en territorio, articuladas con la agenda y la narrativa del medio.</p></div></div>
+      <div class="pitem"><div class="pbar"></div><div><h3>Acceso Preferente a Formatos</h3><p>Prioridad para co-crear formatos, participar de nuevas iniciativas y ocupar espacios estratégicos dentro del ecosistema Muteado.</p></div></div>
+      <div class="pitem"><div class="pbar"></div><div><h3>Presencia Territorial Escalable</h3><p>Activación por células y territorios, con lógica de red y consistencia de marca a nivel provincial/regional.</p></div></div>
+      <div class="pitem"><div class="pbar"></div><div><h3>Producción de Contenido de Marca</h3><p>Contenido dentro del ecosistema Muteado, producido con estándar del medio y alineado a lineamientos editoriales.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. VISIÓN -->
+<section class="vision" id="vision">
+  <div class="inner inner--narrow">
+    <span class="label reveal" style="display:block;">08 · Visión</span>
+    <h2 class="reveal" style="font-size:clamp(2.5rem,7vw,5rem);">Diseñado para<br><strong>el norte argentino.</strong></h2>
+    <p class="body-text reveal" style="max-width:600px; margin:0 auto 1.8rem;">Muteado aspira a convertirse en una referencia informativa del norte argentino. El objetivo no es solo construir audiencia, sino generar comunidades reales: espacios donde las personas puedan informarse, debatir y comprender mejor la realidad que las rodea.</p>
+    <div class="tags reveal">
+      <span class="tag">Periodismo</span>
+      <span class="tag">Tecnología</span>
+      <span class="tag">Análisis Político</span>
+      <span class="tag">Producción Audiovisual</span>
+      <span class="tag">Presencia Territorial</span>
+    </div>
+    <p class="vision-tagline reveal">Muteado está diseñado desde su origen para desarrollarse plenamente en el ecosistema digital, con un diferencial claro: método.</p>
+    <div class="contact-box reveal">
+      <p class="contact-box-label">Contactanos</p>
+      <p class="contact-box-title">Financiar método. Ejecutar en escala.</p>
+      <p class="contact-box-sub">Muteado no es "una idea": es una operación en marcha.</p>
+    </div>
+    <a href="/cdn-cgi/l/email-protection#e4878b8a908587908ba48991908185808bca878b89" class="btn btn-v reveal">Hablar con el equipo</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <svg style="height:22px;fill:white;" viewBox="0 0 1120 263.49" xmlns="http://www.w3.org/2000/svg"><polygon points="403.79 67.11 403.79 202.15 370.89 202.15 370.89 121.17 340.69 202.15 314.14 202.15 283.74 120.97 283.74 202.15 250.85 202.15 250.85 67.11 289.71 67.11 327.61 160.6 365.12 67.11 403.79 67.11"/><path d="M533.45,94.81v107.35h-32.89v-14.62c-3.34,4.75-7.86,8.56-13.56,11.45-5.71,2.89-12.02,4.33-18.95,4.33-8.2,0-15.45-1.83-21.74-5.48-6.29-3.67-11.16-8.96-14.62-15.87-3.46-6.94-5.19-15.08-5.19-24.44v-62.71h32.71v58.3c0,7.17,1.86,12.76,5.57,16.73,3.72,3.98,8.72,5.96,15.01,5.96s11.48-1.98,15.2-5.96c3.72-3.97,5.58-9.57,5.58-16.73v-58.3h32.89Z"/><path d="M616.94,174.26v27.9h-16.73c-11.93,0-21.23-2.91-27.9-8.75-6.67-5.84-10-15.36-10-28.57v-42.71h-13.08v-27.32h13.08v-26.16h32.9v26.16h21.54v27.32h-21.54v43.1c0,3.21.77,5.51,2.31,6.92,1.54,1.41,4.1,2.11,7.7,2.11h11.73Z"/><path d="M702.74,138.09c0-5.64-1.93-10.13-5.77-13.46-3.85-3.34-8.66-5.01-14.43-5.01s-10.16,1.61-13.94,4.82c-3.79,3.21-6.13,7.75-7.02,13.65h41.17ZM735.83,156.36h-74.45c.51,6.69,2.66,11.77,6.45,15.29,3.78,3.54,8.43,5.29,13.95,5.29,8.2,0,13.92-3.46,17.12-10.38h35.01c-1.79,7.05-5.03,13.4-9.71,19.03-4.68,5.65-10.55,10.07-17.61,13.28-7.05,3.21-14.94,4.8-23.65,4.8-10.52,0-19.88-2.24-28.1-6.73-8.2-4.48-14.61-10.9-19.23-19.24-4.62-8.33-6.93-18.08-6.93-29.23s2.28-20.91,6.83-29.24c4.55-8.35,10.93-14.75,19.14-19.24,8.2-4.49,17.63-6.73,28.28-6.73s19.61,2.18,27.7,6.54c8.08,4.35,14.39,10.58,18.94,18.66,4.55,8.08,6.83,17.5,6.83,28.27,0,3.09-.2,6.29-.58,9.61"/><path d="M820.76,129.06c-4.55-4.75-10.1-7.12-16.64-7.12s-12.1,2.33-16.64,7.02c-4.56,4.7-6.83,11.13-6.83,19.33s2.27,14.71,6.83,19.54c4.54,4.8,10.1,7.2,16.64,7.2s12.09-2.36,16.64-7.11c4.55-4.74,6.82-11.23,6.82-19.43s-2.27-14.68-6.82-19.43M753.43,119.24c4.17-8.34,9.84-14.75,17.02-19.24,7.18-4.5,15.2-6.73,24.05-6.73,7.56,0,14.2,1.53,19.91,4.62,5.7,3.08,10.11,7.12,13.17,12.12v-15.2h32.89v107.35h-32.89v-15.2c-3.21,5.01-7.65,9.05-13.36,12.12-5.7,3.09-12.34,4.62-19.91,4.62-8.72,0-16.67-2.27-23.85-6.82-7.18-4.55-12.86-11.02-17.02-19.43-4.17-8.39-6.25-18.11-6.25-29.15s2.08-20.71,6.25-29.04"/><path d="M951.37,129.06c-4.54-4.75-10.1-7.12-16.63-7.12s-12.1,2.33-16.64,7.02c-4.56,4.7-6.84,11.13-6.84,19.33s2.28,14.71,6.84,19.54c4.54,4.8,10.1,7.2,16.64,7.2s12.09-2.36,16.63-7.11c4.56-4.74,6.84-11.23,6.84-19.43s-2.28-14.68-6.84-19.43M884.05,119.24c4.17-8.34,9.83-14.75,17.02-19.24,7.18-4.5,15.2-6.73,24.04-6.73,7.06,0,13.5,1.47,19.34,4.43,5.84,2.94,10.43,6.92,13.76,11.91v-49.81h32.89v142.35h-32.89v-15.39c-3.09,5.13-7.48,9.24-13.18,12.3-5.71,3.09-12.35,4.62-19.92,4.62-8.84,0-16.86-2.27-24.04-6.82-7.19-4.55-12.85-11.02-17.02-19.43-4.18-8.39-6.26-18.11-6.26-29.15s2.08-20.71,6.26-29.04"/><path d="M1079.89,168.29c4.41-4.62,6.64-11.21,6.64-19.8s-2.16-15.2-6.45-19.82c-4.29-4.62-9.58-6.92-15.87-6.92s-11.73,2.27-15.97,6.82c-4.23,4.55-6.34,11.19-6.34,19.91s2.08,15.19,6.24,19.8c4.17,4.62,9.39,6.94,15.69,6.94s11.63-2.32,16.07-6.94M1035.44,196.96c-8.39-4.48-15-10.9-19.8-19.24-4.82-8.33-7.22-18.08-7.22-29.23s2.43-20.74,7.31-29.15c4.87-8.39,11.54-14.84,20.01-19.34,8.45-4.49,17.96-6.73,28.46-6.73s20.01,2.24,28.48,6.73c8.47,4.5,15.12,10.95,20.01,19.34,4.87,8.41,7.31,18.11,7.31,29.15s-2.48,20.75-7.41,29.14c-4.95,8.41-11.68,14.86-20.19,19.33-8.53,4.5-18.07,6.73-28.57,6.73s-19.98-2.24-28.38-6.73"/><path d="M155.61,117.47l-4.93,1.78-24.97,9.03h-.01v88.24h0s-42.76-34.1-42.76-34.1v-38.68h.01v-.06h-.01l-.08.09-13.03,14.59h0s-11.81-5.61-11.81-5.61h0v22.72h-28.09v-12.53l-1.07.39L0,173.72v31.63h63.82l63.2,53.96c3.2,2.73,7.07,4.18,11.19,4.18,9.6,0,17.41-7.79,17.41-17.36V117.47Z"/><path d="M4.93,141.56l24.95-9.04h0v-44.6h28.09l12.49,29.89.04.1v-.02l.04-.13h-.01s12.4-36.82,12.4-36.82l42.76-34.11h0v50.93h.01l29.9-10.84V17.47c0-9.63-7.86-17.47-17.51-17.47-4.15,0-8.04,1.45-11.26,4.21l-63.02,53.81H0v85.25l4.93-1.7Z"/></svg>
+  <p>© 2026 Muteado · Medio de comunicación — Salta, Argentina</p>
+  <p>Propuesta confidencial</p>
+</footer>
+
+<script>
+document.body.classList.add('js-ready');
+const io = new IntersectionObserver(
+  entries => entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      io.unobserve(entry.target);
+    }
+  }),
+  { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+);
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
